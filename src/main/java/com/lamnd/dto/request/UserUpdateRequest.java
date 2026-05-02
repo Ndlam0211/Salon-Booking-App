@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record UserCreateRequest (
+public record UserUpdateRequest (
     @NotBlank(message = "Username is required")
     @UniqueUsername
      String username,
@@ -28,4 +28,4 @@ public record UserCreateRequest (
 
      String fullName,
      String role
-) {}
+){}
