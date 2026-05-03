@@ -14,6 +14,6 @@ public class UniqueUsernameValidator implements ConstraintValidator<UniqueUserna
 
     @Override
     public boolean isValid(String userName, ConstraintValidatorContext context) {
-        return !userRepo.existsByUserName(userName); // return true if email does not exist in the database
+        return !userRepo.existsByUsername(userName); // return true if email does not exist in the database
     }
 }

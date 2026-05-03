@@ -14,15 +14,15 @@ import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 public interface UserMapper extends BaseMapper<User, UserResponse, UserCreateRequest, UserUpdateRequest> {
 
     @Override
-    @BaseMapperAnnotation
-    @Mapping(target = "role", ignore = true)
+//    @BaseMapperAnnotation
+//    @Mapping(target = "role", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     User toEntity(UserCreateRequest createRequest);
 
     @Override
-    @BaseMapperAnnotation
-    @Mapping(target = "role", ignore = true)
-    @Mapping(target = "password", ignore = true)
+//    @BaseMapperAnnotation
+//    @Mapping(target = "role", ignore = true)
+//    @Mapping(target = "password", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateEntityFromRequest(UserUpdateRequest updateRequest, @MappingTarget User entity);
 }

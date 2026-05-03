@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
-    boolean existsByPhone(String phone);
-    boolean existsByUserName(String userName);
+    boolean existsByPhoneNumber(String phone);
+    boolean existsByUsername(String userName);
     boolean existsByEmailAndIdNot(String email, Long id);
-    boolean existsByPhoneAndIdNot(String phone, Long id);
-    boolean existsByUserNameAndIdNot(String userName, Long id);
+    boolean existsByPhoneNumberAndIdNot(String phone, Long id);
+    boolean existsByUsernameAndIdNot(String userName, Long id);
 }

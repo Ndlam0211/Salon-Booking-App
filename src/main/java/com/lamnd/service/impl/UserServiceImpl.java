@@ -26,11 +26,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.toEntity(request);
 
         // xử lý race condition khi có nhiều request tạo user cùng lúc với username/email/phone giống nhau
-        try {
-            userRepo.save(user);
-        } catch (DataIntegrityViolationException ex) {
-            throw new ResourceExistedException("User", "username", request.username());
-        }
+        saveUser(user);
     }
 
     @Override
@@ -62,9 +58,9 @@ public class UserServiceImpl implements UserService {
         User existingUser = findUserById(id);
 
         // kiểm tra trùng lặp username/email/phone khi update và bỏ qua chính bản thân user đang update
-        boolean isUserNameExisted = userRepo.existsByUserNameAndIdNot(request.username(), id);
+        boolean isUserNameExisted = userRepo.existsByUsernameAndIdNot(request.username(), id);
         boolean isEmailExisted = userRepo.existsByEmailAndIdNot(request.email(), id);
-        boolean isPhoneExisted = userRepo.existsByPhoneAndIdNot(request.phoneNumber(), id);
+        boolean isPhoneExisted = userRepo.existsByPhoneNumberAndIdNot(request.phoneNumber(), id);
 
         // Bước này chỉ check và không xử lý được race condition
         if (isUserNameExisted) {
@@ -73,41 +69,47 @@ public class UserServiceImpl implements UserService {
         if (isEmailExisted) {
             throw new ResourceExistedException("User", "email", request.email());
         }
-        if (isPhoneExisted) {
+        if (isPhoneExisted && request.phoneNumber() != null) {
             throw new ResourceExistedException("User", "phone", request.phoneNumber());
         }
 
         // cập nhật thông tin user với dữ liệu mới từ request
         userMapper.updateEntityFromRequest(request, existingUser);
 
-        // Tránh race condition khi có nhiều request update cùng lúc với username/email/phone giống nhau
-        try {
-            return userMapper.toDTO(userRepo.save(existingUser));
-        } catch (DataIntegrityViolationException ex) {
+        // xử lý race condition khi có nhiều request update cùng lúc với username/email/phone giống nhau
+        User updatedUser = saveUser(existingUser);
 
-            if (ex.getMessage().contains("uq_users_email")) {
-                throw new ResourceExistedException("User", "email", request.email());
-            }
-
-            if (ex.getMessage().contains("uq_users_username")) {
-                throw new ResourceExistedException("User", "username", request.username());
-            }
-
-            if (ex.getMessage().contains("uq_users_phone")) {
-                throw new ResourceExistedException("User", "phone number", request.phoneNumber());
-            }
-
-            throw ex;
-        }
+        return userMapper.toDTO(updatedUser);
     }
 
     @Override
     public void deleteUser(Long id) {
+        findUserById(id);
         userRepo.deleteById(id);
     }
 
     private User findUserById(Long id) {
         return userRepo.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+    }
+
+    private User saveUser(User user) {
+        try {
+            return userRepo.save(user);
+        } catch (DataIntegrityViolationException ex) {
+            if (ex.getMessage().contains("uq_users_email")) {
+                throw new ResourceExistedException("User", "email", user.getEmail());
+            }
+
+            if (ex.getMessage().contains("uq_users_username")) {
+                throw new ResourceExistedException("User", "username", user.getUsername());
+            }
+
+            if (ex.getMessage().contains("uq_users_phone")) {
+                throw new ResourceExistedException("User", "phone number", user.getPhoneNumber());
+            }
+
+            throw ex;
+        }
     }
 }

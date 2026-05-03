@@ -14,6 +14,9 @@ public class UniquePhoneValidator implements ConstraintValidator<UniquePhone, St
 
     @Override
     public boolean isValid(String phone, ConstraintValidatorContext context) {
-        return !userRepo.existsByPhone(phone); // return true if phone does not exist in the database
+        if (phone == null) {
+            return true; // consider null as valid, use @NotNull for null checks
+        }
+        return !userRepo.existsByPhoneNumber(phone); // return true if phone does not exist in the database
     }
 }

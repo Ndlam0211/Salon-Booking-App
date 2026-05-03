@@ -14,14 +14,4 @@ public @interface UniqueEmail {
     String message() default "Email already exists"; // default error message when validation fails
     Class<?>[] groups() default {}; // for grouping validations
     Class<? extends Payload>[] payload() default {}; // for carrying metadata
-
-    @Target(ElementType.FIELD)
-    @Retention(RetentionPolicy.RUNTIME)
-    @Documented
-    @Constraint(validatedBy = UniqeUsernameValidator.class)
-    @interface UniqueUsername {
-        String message() default "Username already exists"; // default error message when validation fails
-        Class<?>[] groups() default {}; // for grouping validations
-        Class<? extends Payload>[] payload() default {}; // for carrying metadata
-    }
 }
