@@ -11,21 +11,21 @@ import jakarta.validation.constraints.Size;
 public record UserCreateRequest (
     @NotBlank(message = "Username is required")
     @UniqueUsername
-     String username,
+    String username,
 
     @NotBlank(message = "Email is required")
     @ValidEmail
     @UniqueEmail
-     String email,
+    String email,
 
     @NotBlank(message = "Password is required")
     @Size(min = 8,message= "Password must be at least 8 characters")
-     String password,
+    String password,
 
     @Pattern(regexp = "^\\+?\\d{10}$", message = "Phone number must be 10 digits")
     @UniquePhone
-     String phoneNumber,
+    String phoneNumber,
 
-     String fullName,
-     String role
+    String fullName,
+    String role
 ) {}
